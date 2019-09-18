@@ -10,7 +10,7 @@ function generateToken(user) {
     const secret = process.env.SECRET;
 
     const options = {
-        expires: '1d',
+        expires: '1h',
     }
 
     return jwt.sign(payload, secret, options)
@@ -20,7 +20,18 @@ function findBy(filter) {
     return db('users').where(filter);
 }
 
+function add(user) {
+    return db('users') 
+        .insert(user, 'id') 
+        .then(ids => {
+            const [id] = ids;
+            return id;
+        })
+}
+
+
 module.exports = {
     findBy,
-    generateToken
+    generateToken,
+    add
 }
