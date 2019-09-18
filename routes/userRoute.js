@@ -2,6 +2,7 @@ const express = require('express');
 const bcrypt = require('bcryptjs');
 
 const userDb = require('./userModel.js');
+const restricted = require('./restrictedMiddleware.js')
 
 const router = express.Router();
 
@@ -44,5 +45,24 @@ router.post('/login', (req, res) => {
             res.status(500).json(error)
         })
 });
+
+router.get('/users', restricted, (req, res) => {
+    const id = req.user.id
+    userDb.findDepartmentById({id})
+        .first() 
+        .then(users => {
+            const department = users.department
+            userDb.findByDepartment({department})
+                .then(users => {
+                    res.status(200).json(users)
+                })
+                .catch(error => {
+                    res.status(500).json(error)
+                })
+        })
+        .catch(error => {
+            res.status(500).json(error);
+        })
+})
 
 module.exports = router;

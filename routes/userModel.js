@@ -4,7 +4,7 @@ const jwt = require('jsonwebtoken');
 function generateToken(user) {
     const payload = {
         subject: user.id,
-        username: user.username,
+        username: user.username
     };
 
     const secret = process.env.SECRET;
@@ -20,6 +20,14 @@ function findBy(filter) {
     return db('users').where(filter);
 }
 
+function findAll() {
+    return db('users').select('username', 'department');
+}
+
+function findByDepartment(department) {
+    return db('users').where(department).select('username', 'department');
+}
+
 function add(user) {
     return db('users') 
         .insert(user, 'id') 
@@ -29,9 +37,16 @@ function add(user) {
         })
 }
 
+function findDepartmentById(id) {
+    return db('users').where(id).select('department');
+}
+
 
 module.exports = {
     findBy,
     generateToken,
-    add
+    add,
+    findAll,
+    findByDepartment,
+    findDepartmentById
 }
